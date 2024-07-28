@@ -1,71 +1,48 @@
 #!/sbin/openrc-run
-# This is a service template file to run any dockerized application.
-# Usage:
-# - create a configuration file for the service under /etc/conf.d/service_name
-# - symlink this file with the service name next to it
 
 name="$RC_SVCNAME"
-description="OpenRC script for managing the $name docker-compose project"
+description="OpenRC (template) script for managing a docker-compose project as a service"
 
-# Set default values
-DOCKER_COMPOSE="${DOCKER_COMPOSE:-docker-compose} $DOCKER_COMPOSE_ARGS"
-COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-/srv/docker/$name}"
+command="docker compose --project-directory ${COMPOSE_PROJECT_DIRECTORY:-/srv/docker/$name}"
 
-if [ "$name" = "docker-compose-service-template" ]; then
-	eerror "This is a service template file."
-	eerror "Please, create a symlink and use the created service instead."
-	exit 1
-fi
-
-# Export all variables used by docker-compose CLI
-# export COMPOSE_PROJECT_NAME
-# export COMPOSE_FILE
-# export COMPOSE_PROFILES
-# export COMPOSE_API_VERSION
-# export DOCKER_HOST
-# export DOCKER_TLS_VERIFY
-# export DOCKER_CERT_PATH
-# export COMPOSE_HTTP_TIMEOUT
-# export COMPOSE_TLS_VERSION
-# export COMPOSE_CONVERT_WINDOWS_PATHS
-# export COMPOSE_PATH_SEPARATOR
-# export COMPOSE_FORCE_WINDOWS_HOST
-# export COMPOSE_IGNORE_ORPHANS
-# export COMPOSE_PARALLEL_LIMIT
-# export COMPOSE_INTERACTIVE_NO_CLI
-# export COMPOSE_DOCKER_CLI_BUILD
-
-# Set up (external) networks
-# for name in "${DOCKER_NETWORKS[@]}"
-# do
-#         # Create the network if needed
-#         if ! docker network ls | awk '{ print $2 }' | grep -q "$name"
-#         then
-#                 einfo "Creating docker network '$name'"
-#                 docker network create "$name" > /dev/null
-#         fi
-
-#         # Expose some variables for the networks
-#         network_id="DOCKER_NETWORK_${name}_ID"
-
-#         declare -gx DOCKER_NETWORK_${name}_ID="$(docker network ls | awk '$2 == "'"$name"'" { print $1 }')"
-#         declare -gx DOCKER_NETWORK_${name}_GATEWAY="$(docker network inspect "${!network_id}" | jq -r '.[0].IPAM.Config[0].Gateway')"
-
-#         unset network_id
-# done
+# extra_commands="help"
+# help() {
+# 	einfo "Usage: suppose a Gitlab application packaged for docker-compose..."
+# 	einfo " - Drop the docker-compose.yaml file under /srv/docker/gitlab"
+# 	einfo " - Create the configuration file: /etc/conf.d/gitlab"
+# 	einfo " - Set inside the required variable as follow: COMPOSE_PROJECT_DIRECTORY=\"/srv/docker/gitlab\""
+# 	einfo " - Create a symlink in /etc/conf.d that points to this file nammed gitlab"
+# }
 
 depend() {
-        need docker
+	need docker
+}
+
+start_pre() {
+	# if the service is not run using a symlink
+	if [ ! -L "$1" ]; then
+		eerror "This file is a template and is not intended to be run directly."
+		eerror "See the 'help' section of this service for how to use it."
+		exit 1
+	fi
+
+	[ -f "/etc/conf.d/$name" ] && . /etc/conf.d/"$name"
 }
 
 start() {
-        $DOCKER_COMPOSE --project-directory "$COMPOSE_PROJECT_DIRECTORY" up -d
-}
-
-status() {
-        $DOCKER_COMPOSE --project-directory "$COMPOSE_PROJECT_DIRECTORY" ps
+	ebegin "Starting docker compose: $name"
+	$command $command_args up -d
+	eend $?
 }
 
 stop() {
-        $DOCKER_COMPOSE --project-directory "$COMPOSE_PROJECT_DIRECTORY" down
+	ebegin "Stopping docker compose: $name"
+	$command $command_args down
+	eend $?
+}
+
+status() {
+	ebegin "Informations about docker compose: $name"
+	$command $command_args ps
+	$command $command_args logs
 }
