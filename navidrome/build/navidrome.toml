@@ -1,0 +1,6 @@
+# Application global configuration
+
+# Need to be set exactly as in the Dockerfile VOLUME instruction
+CacheFolder = '/cache'
+DataFolder = '/data'
+MusicFolder = '/music'

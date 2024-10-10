@@ -1,0 +1,45 @@
+services:
+  navidrome:
+
+    # build step: create the following image
+    image: navidrome:latest
+    build:
+      context: ./build
+      args:
+        - APP_VERSION=${APP_VERSION}
+        - UUID=${UUID}
+        - GUID=${GUID}
+      tags:
+        - navidrome:${APP_VERSION}
+    pull_policy: never
+
+    # runtime step:
+    restart: always
+    container_name: navidrome
+    environment:
+      # https://www.navidrome.org/docs/usage/configuration-options/
+      ND_LOGLEVEL: info
+      ND_ENABLEEXTERNALSERVICES: false
+    ports:
+      - "4533:4533"
+    volumes:
+      # The following directories must exist _and_ be writable by an
+      # unprivileged user on the host.
+      # This is to ensure that no root user is involved
+      # as it is not necessary.
+      - type: bind
+        source: ${HOST_PREFIX}/cache
+        target: /cache
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${HOST_PREFIX}/data
+        target: /data
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${HOST_PREFIX}/music
+        target: /music
+        read_only: true
+        bind:
+          create_host_path: false
