@@ -1,0 +1,48 @@
+services:
+
+  baikal:
+
+    # build
+    image: baikal:latest
+    pull_policy: never
+    build:
+      context: ./build
+      args:
+        - APP_VERSION=${APP_VERSION}
+      tags:
+        - baikal:${APP_VERSION}
+
+    # runtime
+    container_name: baikal-nginx
+    restart: always
+    volumes:
+      # data we want to persist
+      - config:/app/baikal/config
+      - specific:/app/baikal/Specific
+      # allows baikal-php to access the app (index.php)
+      - website:/app/baikal
+    ports:
+     - "8080:80"
+    networks:
+      - web_stack
+
+
+  php:
+    depends_on:
+      - baikal
+    image: php:8.1-fpm-alpine
+    container_name: baikal-php
+    restart: always
+    volumes_from:
+      - baikal
+    networks:
+      - web_stack
+
+
+networks:
+  web_stack:
+
+volumes:
+  config:
+  specific:
+  website:
