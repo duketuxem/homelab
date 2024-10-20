@@ -1,0 +1,3 @@
+# Ignore everything but the .keep file
+gitea/data/*
+!gitea/data/.keep
