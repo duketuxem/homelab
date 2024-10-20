@@ -1,0 +1,12 @@
+services:
+  homer:
+    image: b4bz/homer:latest
+    container_name: homer
+    restart: always
+    user: 1000:1000 # default
+    environment:
+      - INIT_ASSETS=1 # default
+    volumes:
+      - "./assets:/www/assets"
+    ports:
+      - 80:8080
