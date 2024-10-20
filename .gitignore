@@ -1,3 +1,8 @@
 # Ignore everything but the .keep file
 gitea/data/*
 !gitea/data/.keep
+
+baikal/backup/config/*
+baikal/backup/config/.keep
+baikal/backup/Specific/*
+baikal/backup/Specific/.keep

@@ -2,9 +2,9 @@
 
 ask()
 {
-	printf "%s [Y/n] " "$1"
+	printf "%s [N/y] " "$1"
 	read -r answer
-	if [ -z "$answer" ] || [ "$answer" = "y" ] || [ "$answer" = "Y" ]
+	if [ "$answer" = "y" ] || [ "$answer" = "Y" ]
 	then
 		return 0
 	else
