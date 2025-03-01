@@ -5,13 +5,13 @@ services:
     container_name: syncthing
     hostname: homelab
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=${UUID:-1000}
+      - PGID=${GUID:-1000}
       # Listen to 127.0.0.1 instead of 0.0.0.0
       - STGUIADDRESS=
     volumes:
       # Can be set in an .env file
-      - ${HOST_MOUNT:-/mnt/docker-syncthing}:/var/syncthing
+      - ${HOST_MOUNT}:/var/syncthing
     # Use network host and no docker networks or abstractions
     network_mode: host
     # This is left for reference
