@@ -9,9 +9,9 @@ filters, and much more!
 
 ## How to run
 
-1. [MANDATORY] Create an `.env` file in this directory with the following variables:
+1. Create an `.env` file in this directory with the following variables:
 ```ini
-# Where the app will persist/read data on the host
+# [MANDATORY] Where the app will persist/read data on the host
 HOST_MOUNT=/home/user/navidrome
 
 # [OPTIONAL] Create a different UUID/GUID than 1000 to match your user's
