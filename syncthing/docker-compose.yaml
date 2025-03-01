@@ -10,7 +10,7 @@ services:
       # Listen to 127.0.0.1 instead of 0.0.0.0
       - STGUIADDRESS=
     volumes:
-      # Can be set in an .env file
+      # Will fail on purpose if $HOST_MOUNT is not specified
       - ${HOST_MOUNT}:/var/syncthing
     # Use network host and no docker networks or abstractions
     network_mode: host
